@@ -1,10 +1,10 @@
 /*------------------------------------------------------------------------------
 
-  LIDARLite_v3HP Arduino Library
-  LIDARLite_v3HP_v3HP.h
+  LIDARLite_v3HP mbed Library
+  LIDARLite_v3HP.h
 
   This library provides quick access to all the basic functions of LIDAR-Lite
-  via the Arduino interface. Additionally, it can provide a user of any
+  via the mbed interface. Additionally, it can provide a user of any
   platform with a template for their own application code.
 
   Copyright (c) 2018 Garmin Ltd. or its subsidiaries.

@@ -1,10 +1,10 @@
 /*------------------------------------------------------------------------------
 
-  LIDARLite_v3HP Arduino Library
+  LIDARLite_v3HP mbed Library
   LIDARLite_v3HP.cpp
 
-  This library provides quick access to the basic functions of LIDAR-Lite
-  via the Nucleo interface. Additionally, it can provide a user of any
+  This library provides quick access to all the basic functions of LIDAR-Lite
+  via the mbed interface. Additionally, it can provide a user of any
   platform with a template for their own application code.
 
   Copyright (c) 2018 Garmin Ltd. or its subsidiaries.
