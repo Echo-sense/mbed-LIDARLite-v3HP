@@ -57,17 +57,17 @@ public:
     /**
      * @brief Selects one of several preset configurations.
      *
-     * @param configuration configuration value. Default 0.
-     *  0: Default mode, balanced performance.
-     *  1: Short range, high speed. Uses 0x1d maximum acquisition count.
+     * @param configuration configuration value. Default 0.\n
+     *  0: Default mode, balanced performance.\n
+     *  1: Short range, high speed. Uses 0x1d maximum acquisition count.\n
      *  2: Default range, higher speed short range. Turns on quick termination
      *      detection for faster measurements at short range (with decreased
-     *      accuracy)
-     *  3: Maximum range. Uses 0xff maximum acquisition count.
+     *      accuracy).\n
+     *  3: Maximum range. Uses 0xff maximum acquisition count.\n
      *  4: High sensitivity detection. Overrides default valid measurement detection
-     *      algorithm, and uses a threshold value for high sensitivity and noise.
+     *      algorithm, and uses a threshold value for high sensitivity and noise.\n
      *  5: Low sensitivity detection. Overrides default valid measurement detection
-     *      algorithm, and uses a threshold value for low sensitivity and noise.
+     *      algorithm, and uses a threshold value for low sensitivity and noise.\n
      */
     void configure(const uint8_t &configuration = 0);
 
@@ -99,8 +99,8 @@ public:
      * @brief Read and return result of distance measurement.
      *
      * Process:
-     * -# Read two bytes from register 0x8f and save
-     * -# Shift the first value from 0x8f << 8 and add to second value from 0x8f.
+     * 1. Read two bytes from register 0x8f and save
+     * 2. Shift the first value from 0x8f << 8 and add to second value from 0x8f.
      *    The result is the measured distance in centimeters.
      *
      * @return distance measurement in centimeters
@@ -135,11 +135,11 @@ public:
      * filter), and then re-enable the filter.
      *
      * Process:
-     * -# Disable the LIDAR-Lite reference filter
-     * -# Set reference integration count to max
-     * -# Trigger a measurement
-     * -# Restore reference integration count
-     * -# Re-enable reference filter
+     * 1. Disable the LIDAR-Lite reference filter
+     * 2. Set reference integration count to max
+     * 3. Trigger a measurement
+     * 4. Restore reference integration count
+     * 5. Re-enable reference filter
      */
     void resetReferenceFilter();
 
@@ -150,16 +150,15 @@ public:
      * It has a bipolar wave shape, transitioning from a positive going portion to a
      * roughly symmetrical negative going pulse. The point where the signal crosses
      * zero represents the effective delay for the reference and return signals.
-
-     * Process
-     * ------------------------------------------------------------------------------
-     * -#  Take a distance reading (there is no correlation record without at least
-     *     one distance reading being taken)
-     * -#  Set test mode select by writing 0x07 to register 0x40
-     * -#  For as many readings as you want to take (max is 1024)
-     *     -#  Read two bytes from 0x52
-     *     -#  The Low byte is the value from the record
-     *     -#  The high byte is the sign from the record
+     *
+     * Process:
+     * 1. Take a distance reading (there is no correlation record without at least
+     *    one distance reading being taken)
+     * 2. Set test mode select by writing 0x07 to register 0x40
+     * 3. For as many readings as you want to take (max is 1024)
+     *    1.  Read two bytes from 0x52
+     *    2.  The Low byte is the value from the record
+     *    3.  The high byte is the sign from the record
      *
      * @param numberOfReadings Default: 1024. Maximum of 1024
     */
