@@ -225,7 +225,7 @@ public:
 private:
     uint8_t _addr;
     I2C     *_i2c;
-    uint8_t _buffer[LIDARLITE_BUFFER_DEPTH];
+    uint8_t *_buffer;
 };
 
 #endif

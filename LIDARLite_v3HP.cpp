@@ -27,12 +27,16 @@
 #include "mbed.h"
 
 
-LIDARLite_v3HP::LIDARLite_v3HP(I2C *i2c) : _i2c(i2c) {
+LIDARLite_v3HP::LIDARLite_v3HP(I2C *i2c) {
+    _i2c = i2c;
     _addr = LIDARLITE_ADDR_DEFAULT;
+    _buffer = (uint8_t *) malloc(LIDARLITE_BUFFER_DEPTH);
 } /* LIDARLite_v3HP::LIDARLite_v3HP */
 
-LIDARLite_v3HP::LIDARLite_v3HP(I2C *i2c, uint8_t &addr) : _i2c(i2c) {
+LIDARLite_v3HP::LIDARLite_v3HP(I2C *i2c, uint8_t &addr) {
+    _i2c = i2c;
     _addr = addr;
+    _buffer = (uint8_t *) malloc(LIDARLITE_BUFFER_DEPTH);
 } /* LIDARLite_v3HP::LIDARLite_v3HP */
 
 void LIDARLite_v3HP::configure(const uint8_t &configuration, const uint8_t &lidarliteAddress) {
@@ -42,6 +46,7 @@ void LIDARLite_v3HP::configure(const uint8_t &configuration, const uint8_t &lida
     uint8_t thresholdBypass;
 
     switch (configuration) {
+    default:
     case 0: // Default mode, balanced performance
         sigCountMax     = 0x80; // Default
         acqConfigReg    = 0x08; // Default
@@ -109,7 +114,7 @@ void LIDARLite_v3HP::setI2Caddr(const uint8_t &newAddress, uint8_t &disableDefau
 
     // Write the new I2C device address to registers
     // left shift by one to work around data alignment issue in v3HP
-    dataBytes[0] = (newAddress << 1);
+    dataBytes[0] = newAddress << 1;
     write(0x1a, dataBytes, 1, lidarliteAddress);
 
     // Enable the new I2C device address using the default I2C device address
@@ -219,12 +224,10 @@ void LIDARLite_v3HP::write(const uint8_t &regAddr, uint8_t *dataBytes,
                            const uint16_t &numBytes, const uint8_t &lidarliteAddress) {
     int nackCatcher;
 
-    // i2c Syntax
-    // -----------------------------------------------------------------
-    // I2C.write(i2cAddress, *data, length, repeated = false)
+    *_buffer = regAddr;
+    memcpy(_buffer + 1, dataBytes, numBytes);
 
-
-    nackCatcher = _i2c->write(lidarliteAddress << 1, (char *) dataBytes, numBytes, false);
+    nackCatcher = _i2c->write(lidarliteAddress << 1, (char *) _buffer, numBytes + 1, false);
 
     // A nack means the device is not responding. Report the error over serial.
     if (nackCatcher != 0) {
