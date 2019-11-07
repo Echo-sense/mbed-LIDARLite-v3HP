@@ -39,7 +39,7 @@ LIDARLite_v3HP::LIDARLite_v3HP(I2C *i2c, uint8_t &addr) {
     _addr8  = LIDARLITE_ADDR_DEFAULT << 1;
     _buffer = (uint8_t *) malloc(LIDARLITE_BUFFER_DEPTH);
 
-    this->setI2Caddr(addr, false);
+    this->setI2Caddr(addr, true);
 } /* LIDARLite_v3HP::LIDARLite_v3HP */
 
 void LIDARLite_v3HP::configure(const uint8_t &configuration) {
