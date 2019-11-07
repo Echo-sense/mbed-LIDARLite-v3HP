@@ -10,3 +10,4 @@ mbed_config.h
 projectfiles
 *.py*
  
+doxygen
