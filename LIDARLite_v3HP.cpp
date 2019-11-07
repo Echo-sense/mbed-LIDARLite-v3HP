@@ -26,7 +26,6 @@
 #include "LIDARLite_v3HP.h"
 #include "mbed.h"
 
-
 LIDARLite_v3HP::LIDARLite_v3HP(I2C *i2c) {
     _i2c    = i2c;
     _addr7  = LIDARLITE_ADDR_DEFAULT;
@@ -107,7 +106,6 @@ void LIDARLite_v3HP::configure(const uint8_t &configuration) {
     write(0x1c, &thresholdBypass, 1);
 } /* LIDARLite_v3HP::configure */
 
-
 void LIDARLite_v3HP::setI2Caddr(const uint8_t &newAddress, bool disableDefault) {
     uint8_t dataBytes[2];
 
@@ -141,13 +139,11 @@ uint8_t LIDARLite_v3HP::getI2Caddr() {
     return _addr7;
 }
 
-
 void LIDARLite_v3HP::takeRange() {
     uint8_t dataByte = 0x01;
 
     write(0x00, &dataByte, 1);
 } /* LIDARLite_v3HP::takeRange */
-
 
 void LIDARLite_v3HP::waitForBusy() {
     uint16_t busyCounter = 0; // busyCounter counts number of times busy flag is checked, for timeout
@@ -170,7 +166,6 @@ void LIDARLite_v3HP::waitForBusy() {
     if (busyCounter > 9999) {
     }
 } /* LIDARLite_v3HP::waitForBusy */
-
 
 uint8_t LIDARLite_v3HP::getBusyFlag() {
     uint8_t busyFlag; // busyFlag monitors when the device is done with a measurement
@@ -230,43 +225,6 @@ void LIDARLite_v3HP::resetReferenceFilter() {
     write(0x04, dataBytes, 1);
 } /* LIDARLite_v3HP::resetReferenceFilter */
 
-
-void LIDARLite_v3HP::write(const uint8_t &regAddr, uint8_t *dataBytes,
-                           const uint16_t &numBytes) {
-    int nackCatcher;
-
-    *_buffer = regAddr;
-    memcpy(_buffer + 1, dataBytes, numBytes);
-
-    nackCatcher = _i2c->write(_addr8, (char *) _buffer, numBytes + 1, false);
-
-    // A nack means the device is not responding. Report the error over serial.
-    if (nackCatcher != 0) {
-        printf("> nack\n\r");
-    }
-
-    wait_us(100); // 100 us delay for robustness with successive reads and writes
-} /* LIDARLite_v3HP::write */
-
-
-void LIDARLite_v3HP::read(const uint8_t &regAddr, uint8_t *dataBytes,
-                          const uint16_t &numBytes) {
-    int nackCatcher = 0;
-
-    char regAddrC = char(regAddr);
-
-    // A nack means the device is not responding, report the error over serial
-    nackCatcher = _i2c->write(_addr8, &regAddrC, 1, false); // false means perform repeated start
-
-    if (nackCatcher != 0) {
-        printf("> nack\n\r");
-    }
-
-    // Perform read, save in dataBytes array
-    _i2c->read(_addr8, (char *) dataBytes, numBytes);
-} /* LIDARLite_v3HP::read */
-
-
 void LIDARLite_v3HP::correlationRecordToSerial(
     const uint16_t &numberOfReadings) {
     uint16_t i                = 0;
@@ -295,3 +253,37 @@ void LIDARLite_v3HP::correlationRecordToSerial(
     dataBytes[0] = 0;
     write(0x40, dataBytes, 1);
 } /* LIDARLite_v3HP::correlationRecordToSerial */
+
+void LIDARLite_v3HP::write(const uint8_t &regAddr, uint8_t *dataBytes,
+                           const uint16_t &numBytes) {
+    int nackCatcher;
+
+    *_buffer = regAddr;
+    memcpy(_buffer + 1, dataBytes, numBytes);
+
+    nackCatcher = _i2c->write(_addr8, (char *) _buffer, numBytes + 1, false);
+
+    // A nack means the device is not responding. Report the error over serial.
+    if (nackCatcher != 0) {
+        printf("> nack\n\r");
+    }
+
+    wait_us(100); // 100 us delay for robustness with successive reads and writes
+} /* LIDARLite_v3HP::write */
+
+void LIDARLite_v3HP::read(const uint8_t &regAddr, uint8_t *dataBytes,
+                          const uint16_t &numBytes) {
+    int nackCatcher = 0;
+
+    char regAddrC = char(regAddr);
+
+    // A nack means the device is not responding, report the error over serial
+    nackCatcher = _i2c->write(_addr8, &regAddrC, 1, false); // false means perform repeated start
+
+    if (nackCatcher != 0) {
+        printf("> nack\n\r");
+    }
+
+    // Perform read, save in dataBytes array
+    _i2c->read(_addr8, (char *) dataBytes, numBytes);
+} /* LIDARLite_v3HP::read */
