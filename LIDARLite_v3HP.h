@@ -30,11 +30,28 @@
 
 #include "mbed.h"
 
+/**
+ * @brief Class for interfacing with the LIDARLite v3HP sensor
+ */
 class LIDARLite_v3HP {
 
 public:
+
+    /**
+     * @brief Constructs a new LIDARLite_v3HP object
+     *
+     * @param i2c I2C bus to communicate over
+     */
     LIDARLite_v3HP(I2C *i2c);
 
+    /**
+     * @brief Constructs a new LIDARLite_v3HP object with a custom address
+     *
+     * The address is automatically written to the device
+     *
+     * @param i2c  I2C bus to communicate over
+     * @param addr 7-bit I2C address to use
+     */
     LIDARLite_v3HP(I2C *i2c, uint8_t &addr);
 
     /**
