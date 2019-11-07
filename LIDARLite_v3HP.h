@@ -58,7 +58,7 @@ public:
       lidarliteAddress: Default 0x62. Fill in new address here if changed. See
         operating manual for instructions.
     */
-    void configure(const uint8_t &configuration = 0, const uint8_t &lidarliteAddress = LIDARLITE_ADDR_DEFAULT);
+    void configure(const uint8_t &configuration = 0);
 
     /**
       Set I2C Address
@@ -73,7 +73,9 @@ public:
       lidarliteAddress: Default 0x62. Fill in new address here if changed. See
         operating manual for instructions.
     */
-    void setI2Caddr(const uint8_t &newAddress, uint8_t &disableDefault, const uint8_t &lidarliteAddress = LIDARLITE_ADDR_DEFAULT);
+    void setI2Caddr(const uint8_t &newAddress, bool disableDefault);
+
+    uint8_t getI2Caddr();
 
     /**
       Take Range
@@ -85,7 +87,7 @@ public:
       lidarliteAddress: Default 0x62. Fill in new address here if changed. See
         operating manual for instructions.
     */
-    void takeRange(const uint8_t &lidarliteAddress = LIDARLITE_ADDR_DEFAULT);
+    void takeRange();
 
     /**
       Read Distance
@@ -103,7 +105,7 @@ public:
       lidarliteAddress: Default 0x62. Fill in new address here if changed. See
         operating manual for instructions.
     */
-    uint16_t readDistance(const uint8_t &lidarliteAddress = LIDARLITE_ADDR_DEFAULT);
+    uint16_t readDistance();
 
     /**
       Wait for Busy Flag
@@ -115,7 +117,7 @@ public:
       lidarliteAddress: Default 0x62. Fill in new address here if changed. See
         operating manual for instructions.
     */
-    void waitForBusy(const uint8_t &lidarliteAddress = LIDARLITE_ADDR_DEFAULT);
+    void waitForBusy();
 
     /**
       Get Busy Flag
@@ -127,7 +129,7 @@ public:
       lidarliteAddress: Default 0x62. Fill in new address here if changed. See
         operating manual for instructions.
      */
-    uint8_t getBusyFlag(const uint8_t &lidarliteAddress = LIDARLITE_ADDR_DEFAULT);
+    uint8_t getBusyFlag();
 
     /**
       Reset Reference Filter
@@ -153,7 +155,7 @@ public:
       lidarliteAddress: Default 0x62. Fill in new address here if changed. See
       operating manual for instructions.
      */
-    void resetReferenceFilter(const uint8_t &lidarliteAddress = LIDARLITE_ADDR_DEFAULT);
+    void resetReferenceFilter();
 
     /**
       Write
@@ -172,7 +174,7 @@ public:
       lidarliteAddress: Default 0x62. Fill in new address here if changed. See
       operating manual for instructions.
     */
-    void write(const uint8_t &regAddr, uint8_t *dataBytes, const uint16_t &numBytes, const uint8_t &lidarliteAddress = LIDARLITE_ADDR_DEFAULT);
+    void write(const uint8_t &regAddr, uint8_t *dataBytes, const uint16_t &numBytes);
 
     /**
       Read
@@ -193,7 +195,7 @@ public:
       lidarliteAddress: Default 0x62. Fill in new address here if changed. See
         operating manual for instructions.
     */
-    void read(const uint8_t &regAddr, uint8_t *dataBytes, const uint16_t &numBytes, const uint8_t &lidarliteAddress = LIDARLITE_ADDR_DEFAULT);
+    void read(const uint8_t &regAddr, uint8_t *dataBytes, const uint16_t &numBytes);
 
     /**
       Correlation Record To Serial
@@ -220,10 +222,11 @@ public:
       lidarliteAddress: Default 0x62. Fill in new address here if changed. See
         operating manual for instructions.
     */
-    void correlationRecordToSerial(const uint16_t &numberOfReadings = 1024, const uint8_t &lidarliteAddress = LIDARLITE_ADDR_DEFAULT);
+    void correlationRecordToSerial(const uint16_t &numberOfReadings = 1024);
 
 private:
-    uint8_t _addr;
+    uint8_t _addr7;
+    uint8_t _addr8;
     I2C     *_i2c;
     uint8_t *_buffer;
 };
