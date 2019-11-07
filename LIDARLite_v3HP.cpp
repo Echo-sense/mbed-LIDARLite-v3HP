@@ -140,7 +140,7 @@ uint8_t LIDARLite_v3HP::getI2Caddr() {
 }
 
 void LIDARLite_v3HP::takeRange() {
-    uint8_t dataByte = 0x01;
+    uint8_t dataByte = 0x04;
 
     write(0x00, &dataByte, 1);
 } /* LIDARLite_v3HP::takeRange */
@@ -160,10 +160,13 @@ void LIDARLite_v3HP::waitForBusy() {
 
         // Increment busyCounter for timeout
         busyCounter++;
+
+        wait_us(100);
     }
 
     // bailout reports error over serial
     if (busyCounter > 9999) {
+        printf("waitForBusy timed out");
     }
 } /* LIDARLite_v3HP::waitForBusy */
 
@@ -265,7 +268,7 @@ void LIDARLite_v3HP::write(const uint8_t &regAddr, uint8_t *dataBytes,
 
     // A nack means the device is not responding. Report the error over serial.
     if (nackCatcher != 0) {
-        printf("> nack\n\r");
+        printf("> nack %d\n\r", nackCatcher);
     }
 
     wait_us(100); // 100 us delay for robustness with successive reads and writes
@@ -281,7 +284,7 @@ void LIDARLite_v3HP::read(const uint8_t &regAddr, uint8_t *dataBytes,
     nackCatcher = _i2c->write(_addr8, &regAddrC, 1, false); // false means perform repeated start
 
     if (nackCatcher != 0) {
-        printf("> nack\n\r");
+        printf("> nack %d\n\r", nackCatcher);
     }
 
     // Perform read, save in dataBytes array
