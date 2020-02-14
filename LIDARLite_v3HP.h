@@ -93,6 +93,20 @@ public:
      *      algorithm, and uses a threshold value for high sensitivity and noise.\n
      *  5: Low sensitivity detection. Overrides default valid measurement detection
      *      algorithm, and uses a threshold value for low sensitivity and noise.\n
+     *
+     * @param mode Mode select pin function
+     *  Mode for the yellow wire on the device
+     *  0: Default PWM mode
+     *     Pull pin low to trigger measurement, device will respond with an active high output
+     *     with a duration of 10 us/cm.
+     *  1: Status output mode
+     *     Device will drive pin active high while busy. Can be used to interrupt host device.
+     *  2: Fixed delay PWM mode
+     *     Pulling pin low will not trigger a measurement.
+     *  3: Oscillator output mode
+     *     Nominal 31.25 kHz output. The accuracy of the silicon oscillator in the device is
+     *     generally within 1% of nominal. This affects distance measurements proportionally
+     *     and can be measured to apply a compensation factor.
      */
     void configure(const uint8_t &configuration = 0, const uint8_t &mode = 0);
 
