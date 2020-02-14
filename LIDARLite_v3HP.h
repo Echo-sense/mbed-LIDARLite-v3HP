@@ -28,6 +28,31 @@
 #define LIDARLITE_ADDR_DEFAULT 0x62
 #define LIDARLITE_BUFFER_DEPTH 8 // device only has 3 consecutive registers maximum so this is plenty
 
+#define LIDARLITE_ACQ_COMMAND 0x00
+#define LIDARLITE_STATUS 0x01
+#define LIDARLITE_SIG_COUNT_VAL 0x02
+#define LIDARLITE_ACQ_CONFIG_REG 0x04
+#define LIDARLITE_LEGACY_RESET_EN 0x06
+#define LIDARLITE_SIGNAL_STRENGTH 0x0E
+#define LIDARLITE_FULL_DELAY_HIGH 0x0F
+#define LIDARLITE_FULL_DELAY_LOW 0x10
+#define LIDARLITE_REF_COUNT_VAL 0x12
+#define LIDARLITE_UNIT_ID_HIGH 0x16
+#define LIDARLITE_UNIT_ID_LOW 0x17
+#define LIDARLITE_I2C_ID_HIGH 0x18
+#define LIDARLITE_I2C_ID_LOW 0x19
+#define LIDARLITE_I2C_SEC_ADDR 0x1A
+#define LIDARLITE_THRESHOLD_BYPASS 0x1C
+#define LIDARLITE_I2C_CONFIG 0x1E
+#define LIDARLITE_PEAK_STACK_HIGH 0x26
+#define LIDARLITE_PEAK_STACK_LOW 0x27
+#define LIDARLITE_COMMAND 0x40
+#define LIDARLITE_HEALTH  0x48
+#define LIDARLITE_CORR_DATA 0x52
+#define LIDARLITE_CORR_DATA_SIGN 0x53
+#define LIDARLITE_POWER_CONTROL 0x65
+
+
 #include "mbed.h"
 
 /**
@@ -69,7 +94,7 @@ public:
      *  5: Low sensitivity detection. Overrides default valid measurement detection
      *      algorithm, and uses a threshold value for low sensitivity and noise.\n
      */
-    void configure(const uint8_t &configuration = 0);
+    void configure(const uint8_t &configuration = 0, const uint8_t &mode = 0);
 
     /**
      * @brief Set I2C Address

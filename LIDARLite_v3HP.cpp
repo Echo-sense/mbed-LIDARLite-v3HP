@@ -42,68 +42,80 @@ LIDARLite_v3HP::LIDARLite_v3HP(I2C *i2c, uint8_t &addr) {
     this->setI2Caddr(addr, true);
 } /* LIDARLite_v3HP::LIDARLite_v3HP */
 
-void LIDARLite_v3HP::configure(const uint8_t &configuration) {
+void LIDARLite_v3HP::configure(const uint8_t &configuration, const uint8_t &mode) {
     uint8_t sigCountMax;
-    uint8_t acqConfigReg;
     uint8_t refCountMax;
     uint8_t thresholdBypass;
+    uint8_t acqConfigReg;
+
+    read(LIDARLITE_SIG_COUNT_VAL, &sigCountMax, 1);
+    read(LIDARLITE_ACQ_CONFIG_REG, &acqConfigReg, 1);
+    read(LIDARLITE_REF_COUNT_VAL, &refCountMax, 1);
+    read(LIDARLITE_THRESHOLD_BYPASS, &thresholdBypass, 1);
+
+    uint8_t quickTerminateMask = 0x08;
+    uint8_t modeMask           = 0xFC;
+
+    acqConfigReg &= modeMask;
+    acqConfigReg |= (mode & ~modeMask);
 
     switch (configuration) {
     default:
     case 0: // Default mode, balanced performance
         sigCountMax     = 0x80; // Default
-        acqConfigReg    = 0x08; // Default
         refCountMax     = 0x05; // Default
         thresholdBypass = 0x00; // Default
+        acqConfigReg |= quickTerminateMask;
         break;
 
     case 1: // Short range, high speed
         sigCountMax     = 0x1d;
-        acqConfigReg    = 0x08; // Default
         refCountMax     = 0x03;
         thresholdBypass = 0x00; // Default
+        acqConfigReg |= quickTerminateMask; // Default
         break;
 
     case 2: // Default range, higher speed short range
         sigCountMax     = 0x80; // Default
-        acqConfigReg    = 0x00;
         refCountMax     = 0x03;
         thresholdBypass = 0x00; // Default
+        acqConfigReg &= ~quickTerminateMask;
         break;
 
     case 3: // Maximum range
         sigCountMax     = 0xff;
-        acqConfigReg    = 0x08; // Default
         refCountMax     = 0x05; // Default
         thresholdBypass = 0x00; // Default
+        acqConfigReg |= quickTerminateMask; // Default
         break;
 
     case 4: // High sensitivity detection, high erroneous measurements
         sigCountMax     = 0x80; // Default
-        acqConfigReg    = 0x08; // Default
         refCountMax     = 0x05; // Default
         thresholdBypass = 0x80;
+        acqConfigReg |= quickTerminateMask; // Default
         break;
 
     case 5: // Low sensitivity detection, low erroneous measurements
         sigCountMax     = 0x80; // Default
-        acqConfigReg    = 0x08; // Default
         refCountMax     = 0x05; // Default
         thresholdBypass = 0xb0;
+        acqConfigReg |= quickTerminateMask; // Default
         break;
 
     case 6: // Short range, high speed, higher error
         sigCountMax     = 0x04;
-        acqConfigReg    = 0x01; // turn off short_sig, mode pin = status output mode
         refCountMax     = 0x03;
         thresholdBypass = 0x00;
+        acqConfigReg &= ~quickTerminateMask; // turn off short_sig, mode pin = status output mode
+
         break;
     }
 
-    write(0x02, &sigCountMax, 1);
-    write(0x04, &acqConfigReg, 1);
-    write(0x12, &refCountMax, 1);
-    write(0x1c, &thresholdBypass, 1);
+    write(LIDARLITE_SIG_COUNT_VAL, &sigCountMax, 1);
+    write(LIDARLITE_ACQ_CONFIG_REG, &acqConfigReg, 1);
+    write(LIDARLITE_REF_COUNT_VAL, &refCountMax, 1);
+    write(LIDARLITE_THRESHOLD_BYPASS, &thresholdBypass, 1);
 } /* LIDARLite_v3HP::configure */
 
 void LIDARLite_v3HP::setI2Caddr(const uint8_t &newAddress, bool disableDefault) {
@@ -202,16 +214,16 @@ void LIDARLite_v3HP::resetReferenceFilter() {
     uint8_t refCountMax;
 
     // Set bit 4 of the acquisition configuration register (disable reference filter)
-    read(0x04, dataBytes, 1);  // Read address 0x04 (acquisition config register)
+    read(LIDARLITE_ACQ_CONFIG_REG, dataBytes, 1);  // Read address LIDARLITE_ACQ_CONFIG_REG (acquisition config register)
     acqConfigReg = dataBytes[0];                 // store for later restoration
     dataBytes[0] = dataBytes[0] | 0x10;          // turn on disable of ref filter
-    write(0x04, dataBytes, 1); // write it back
+    write(LIDARLITE_ACQ_CONFIG_REG, dataBytes, 1); // write it back
 
     // Set reference integration count to max
-    read(0x12, dataBytes, 1);  // Read address 0x12 (ref integration count)
+    read(LIDARLITE_REF_COUNT_VAL, dataBytes, 1);  // Read address LIDARLITE_REF_COUNT_MAX (ref integration count)
     refCountMax = dataBytes[0];                  // store for later restoration
     dataBytes[0] = 0xff;                         // we want to reference to overflow quickly
-    write(0x12, dataBytes, 1); // write ref integration count
+    write(LIDARLITE_REF_COUNT_VAL, dataBytes, 1); // write ref integration count
 
     // Trigger a measurement
     waitForBusy();
@@ -221,11 +233,11 @@ void LIDARLite_v3HP::resetReferenceFilter() {
 
     // Restore previous reference integration count
     dataBytes[0] = refCountMax;
-    write(0x12, dataBytes, 1);
+    write(LIDARLITE_REF_COUNT_VAL, dataBytes, 1);
 
     // Restore previous acquisition configuration register (re-enabling reference filter)
     dataBytes[0] = acqConfigReg;
-    write(0x04, dataBytes, 1);
+    write(LIDARLITE_ACQ_CONFIG_REG, dataBytes, 1);
 } /* LIDARLite_v3HP::resetReferenceFilter */
 
 void LIDARLite_v3HP::correlationRecordToSerial(
